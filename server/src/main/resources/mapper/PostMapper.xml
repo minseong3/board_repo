@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cspi.notionboard.module.post.dao.PostMapper">
+
+    <insert id="insertPost" useGeneratedKeys="true" keyProperty="postId">
+    /* PostMapper, insertPost */
+        INSERT INTO POSTS
+                  (
+                    NICKNAME
+                  , PASSWORD
+                  , TITLE
+                  , CONTENT
+                  )
+             VALUES
+                  (
+                    #{nickname}
+                  , #{password}
+                  , #{title}
+                  , #{content}
+                  )
+    </insert>
+
+    <resultMap id="SelectResultsMap" type="com.cspi.notionboard.module.post.dto.PostDto">
+        <id property="postId" column="post_id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    <select id="selectAllPosts" resultMap="SelectResultsMap">
+    /* PostMapper, selectAllPosts */
+        SELECT  POST_ID
+             ,  NICKNAME
+             ,  TITLE
+             ,  CONTENT
+             ,  CREATED_AT
+          FROM  POSTS
+      ORDER BY  CREATED_AT DESC
+    </select>
+
+    <select id="searchedPosts" resultType="com.cspi.notionboard.module.post.dto.PostDto">
+    /* PostMapper, searchedPosts */
+        SELECT  P.POST_ID
+             ,  P.NICKNAME
+             ,  P.TITLE
+             ,  P.CREATED_AT
+        FROM    POSTS AS P
+        WHERE   1=1
+          <if test="keyword != null and keyword != ''">
+          AND LOWER(P.TITLE) LIKE '%' || LOWER(#{keyword}) || '%'
+         </if>
+    </select>
+
+    <resultMap id="SelectResultMap" type="com.cspi.notionboard.module.post.dto.PostDto">
+        <id property="postId" column="post_id" />
+        <result property="nickname" column="post_nickname" />
+        <result property="title" column="post_title" />
+        <result property="content" column="post_content" />
+        <result property="createdAt" column="post_created_at" />
+
+        <collection property="answers" ofType="com.cspi.notionboard.module.answer.dto.AnswerDto">
+            <id property="answerId" column="answer_id" />
+            <result property="nickname" column="answer_nickname" />
+            <result property="content" column="answer_content" />
+            <result property="createdAt" column="answer_created_at" />
+        </collection>
+    </resultMap>
+    <select id="selectPost" resultMap="SelectResultMap">
+    /* PostMapper, selectPost */
+        SELECT  P.POST_ID
+             ,  P.NICKNAME AS POST_NICKNAME
+             ,  P.TITLE AS POST_TITLE
+             ,  P.CONTENT AS POST_CONTENT
+             ,  P.CREATED_AT AS POST_CREATED_AT
+             ,  A.ANSWER_ID
+             ,  A.NICKNAME AS ANSWER_NICKNAME
+             ,  A.CONTENT AS ANSWER_CONTENT
+             ,  A.CREATED_AT AS ANSWER_CREATED_AT
+          FROM  POSTS AS P
+     LEFT JOIN  ANSWERS AS A ON P.POST_ID = A.POST_ID
+         WHERE  1=1
+           <if test="postId != null and postId != ''">
+           AND P.POST_ID = #{postId}
+           </if>
+    </select>
+
+    <select id="findById" resultType="com.cspi.notionboard.module.post.dto.PostDto">
+    /* PostMapper, findById */
+        SELECT  POST_ID
+             ,  NICKNAME
+             ,  PASSWORD
+             ,  TITLE
+             ,  CONTENT
+             ,  CREATED_AT
+         FROM   POSTS
+        WHERE 1=1
+        <if test="postId != null and postId != ''">
+        AND POST_ID = #{postId}
+        </if>
+    </select>
+
+    <update id="updatePost">
+    /* PostMapper, updatePost */
+        UPDATE  POSTS
+           SET  title = #{postDto.title}
+             ,  content = #{postDto.content}
+         WHERE  1=1
+            <if test="postId != null and postId != ''">
+            AND POST_ID = #{postId}
+            </if>
+    </update>
+
+    <delete id="deletePost">
+    /* PostMapper, deletePost */
+        DELETE
+          FROM  POSTS
+         WHERE  1=1
+           <if test="postId != null and postId != ''">
+           AND POST_ID = #{postId}
+           </if>
+    </delete>
+</mapper>
