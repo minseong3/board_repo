@@ -58,12 +58,14 @@
         <result property="title" column="post_title" />
         <result property="content" column="post_content" />
         <result property="createdAt" column="post_created_at" />
+        <result property="modifiedAt" column="post_modified_at" />
 
         <collection property="comments" ofType="com.cspi.notionboard.module.comment.dto.CommentDto">
             <id property="commentId" column="comment_id" />
             <result property="nickname" column="comment_nickname" />
             <result property="content" column="comment_content" />
             <result property="createdAt" column="comment_created_at" />
+            <result property="modifiedAt" column="comment_modified_at" />
         </collection>
     </resultMap>
     <select id="selectPost" resultMap="SelectResultMap">
@@ -73,12 +75,14 @@
              ,  P.TITLE AS POST_TITLE
              ,  P.CONTENT AS POST_CONTENT
              ,  P.CREATED_AT AS POST_CREATED_AT
+             ,  P.MODIFIED_AT AS POST_MODIFIED_AT
              ,  C.COMMENT_ID
              ,  C.NICKNAME AS COMMENT_NICKNAME
              ,  C.CONTENT AS COMMENT_CONTENT
              ,  C.CREATED_AT AS COMMENT_CREATED_AT
+             ,  C.MODIFIED_AT AS COMMENT_MODIFIED_AT
           FROM  POSTS AS P
-     LEFT JOIN  COMMENTS AS C ON P.POST_ID = A.POST_ID
+     LEFT JOIN  COMMENTS AS C ON P.POST_ID = C.POST_ID
          WHERE  1=1
            <if test="postId != null and postId != ''">
            AND P.POST_ID = #{postId}
@@ -93,6 +97,7 @@
              ,  TITLE
              ,  CONTENT
              ,  CREATED_AT
+             ,  MODIFIED_AT
          FROM   POSTS
         WHERE 1=1
         <if test="postId != null and postId != ''">
@@ -105,6 +110,7 @@
         UPDATE  POSTS
            SET  title = #{postDto.title}
              ,  content = #{postDto.content}
+             ,  modified_at = NOW()
          WHERE  1=1
             <if test="postId != null and postId != ''">
             AND POST_ID = #{postId}

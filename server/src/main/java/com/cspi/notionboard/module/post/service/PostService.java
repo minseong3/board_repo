@@ -1,6 +1,6 @@
 package com.cspi.notionboard.module.post.service;
 
-import com.cspi.notionboard.global.PasswordUtil;
+import com.cspi.notionboard.global.authentication.PasswordUtil;
 import com.cspi.notionboard.global.exception.NotFoundException;
 import com.cspi.notionboard.module.post.dao.PostMapper;
 import com.cspi.notionboard.module.post.dto.PostDto;
