@@ -1,6 +1,6 @@
 package com.cspi.notionboard.module.post.dto;
 
-import com.cspi.notionboard.module.answer.dto.AnswerDto;
+import com.cspi.notionboard.module.comment.dto.CommentDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,5 +17,5 @@ public class PostDto {
         private String title;
         private String content;
         private LocalDate createdAt;
-        private List<AnswerDto> answers = new ArrayList<>();
+        private List<CommentDto> comments = new ArrayList<>();
 }
