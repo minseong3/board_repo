@@ -1,6 +1,5 @@
 package com.cspi.notionboard.module.post.controller;
 
-import com.cspi.notionboard.global.PasswordUtil;
 import com.cspi.notionboard.module.post.dto.PostDto;
 import com.cspi.notionboard.module.post.service.PostService;
 import lombok.extern.slf4j.Slf4j;

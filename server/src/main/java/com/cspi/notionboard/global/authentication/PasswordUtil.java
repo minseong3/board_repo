@@ -1,4 +1,4 @@
-package com.cspi.notionboard.global;
+package com.cspi.notionboard.global.authentication;
 
 import org.mindrot.jbcrypt.BCrypt;
 public class PasswordUtil {
