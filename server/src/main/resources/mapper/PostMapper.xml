@@ -3,101 +3,75 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cspi.notionboard.module.post.dao.PostMapper">
 
-    <insert id="insertPost" useGeneratedKeys="true" keyProperty="postId">
+    <insert id="insertPost" useGeneratedKeys="true" keyProperty="post_id">
     /* PostMapper, insertPost */
         INSERT INTO POSTS
                   (
                     NICKNAME
-                  , PASSWORD
+                  , POST_PASSWORD
                   , TITLE
                   , CONTENT
+                  , CREATED_AT
+                  , MODIFIED_AT
                   )
              VALUES
                   (
                     #{nickname}
-                  , #{password}
+                  , #{postPassword}
                   , #{title}
                   , #{content}
+                  , NOW()
+                  , NOW()
                   )
     </insert>
 
-    <resultMap id="SelectResultsMap" type="com.cspi.notionboard.module.post.dto.PostDto">
-        <id property="postId" column="post_id"/>
-        <result property="nickname" column="nickname"/>
-        <result property="title" column="title"/>
-        <result property="content" column="content"/>
-        <result property="createdAt" column="created_at"/>
-    </resultMap>
-    <select id="selectAllPosts" resultMap="SelectResultsMap">
+    <select id="selectAllPosts" resultType="map">
     /* PostMapper, selectAllPosts */
-        SELECT  POST_ID
-             ,  NICKNAME
-             ,  TITLE
-             ,  CONTENT
-             ,  CREATED_AT
+        SELECT  POST_ID        /* 게시글 ID */
+             ,  NICKNAME       /* 게시글 작성자 닉네임 */
+             ,  TITLE          /* 본문 제목 */
+             ,  CONTENT        /* 본문 내용 */
+             ,  CREATED_AT     /* 생성 시간 */
+             ,  MODIFIED_AT    /* 수정 시간 */
           FROM  POSTS
       ORDER BY  CREATED_AT DESC
     </select>
 
-    <select id="searchedPosts" resultType="com.cspi.notionboard.module.post.dto.PostDto">
+    <select id="searchedPosts" resultType="map">
     /* PostMapper, searchedPosts */
-        SELECT  P.POST_ID
-             ,  P.NICKNAME
-             ,  P.TITLE
-             ,  P.CREATED_AT
-        FROM    POSTS AS P
+        SELECT  POST_ID       /* 게시글 ID */
+             ,  NICKNAME      /* 게시글 작성자 닉네임 */
+             ,  TITLE         /* 본문 제목 */
+             ,  CONTENT       /* 본문 내용 */
+             ,  CREATED_AT    /* 생성 시간 */
+             ,  MODIFIED_AT   /* 수정 시간 */
+        FROM    POSTS
         WHERE   1=1
           <if test="keyword != null and keyword != ''">
-          AND LOWER(P.TITLE) LIKE '%' || LOWER(#{keyword}) || '%'
+          AND LOWER(TITLE) LIKE '%' || LOWER(#{keyword}) || '%'
          </if>
     </select>
 
-    <resultMap id="SelectResultMap" type="com.cspi.notionboard.module.post.dto.PostDto">
-        <id property="postId" column="post_id" />
-        <result property="nickname" column="post_nickname" />
-        <result property="title" column="post_title" />
-        <result property="content" column="post_content" />
-        <result property="createdAt" column="post_created_at" />
-        <result property="modifiedAt" column="post_modified_at" />
-
-        <collection property="comments" ofType="com.cspi.notionboard.module.comment.dto.CommentDto">
-            <id property="commentId" column="comment_id" />
-            <result property="nickname" column="comment_nickname" />
-            <result property="content" column="comment_content" />
-            <result property="createdAt" column="comment_created_at" />
-            <result property="modifiedAt" column="comment_modified_at" />
-        </collection>
-    </resultMap>
-    <select id="selectPost" resultMap="SelectResultMap">
-    /* PostMapper, selectPost */
-        SELECT  P.POST_ID
-             ,  P.NICKNAME AS POST_NICKNAME
-             ,  P.TITLE AS POST_TITLE
-             ,  P.CONTENT AS POST_CONTENT
-             ,  P.CREATED_AT AS POST_CREATED_AT
-             ,  P.MODIFIED_AT AS POST_MODIFIED_AT
-             ,  C.COMMENT_ID
-             ,  C.NICKNAME AS COMMENT_NICKNAME
-             ,  C.CONTENT AS COMMENT_CONTENT
-             ,  C.CREATED_AT AS COMMENT_CREATED_AT
-             ,  C.MODIFIED_AT AS COMMENT_MODIFIED_AT
-          FROM  POSTS AS P
-     LEFT JOIN  COMMENTS AS C ON P.POST_ID = C.POST_ID
-         WHERE  1=1
-           <if test="postId != null and postId != ''">
-           AND P.POST_ID = #{postId}
-           </if>
+    <select id="selectPost" resultType="map">
+        SELECT POST_ID        /* 게시글 ID */
+             , NICKNAME       /* 게시글 작성자 닉네임 */
+             , TITLE          /* 게시글 제목 */
+             , CONTENT        /* 게시글 내용 */
+             , CREATED_AT     /* 생성 시간 */
+             , MODIFIED_AT    /* 수정 시간 */
+          FROM POSTS
+         WHERE POST_ID = #{postId}
     </select>
 
-    <select id="findById" resultType="com.cspi.notionboard.module.post.dto.PostDto">
+    <select id="findById" resultType="map">
     /* PostMapper, findById */
-        SELECT  POST_ID
-             ,  NICKNAME
-             ,  PASSWORD
-             ,  TITLE
-             ,  CONTENT
-             ,  CREATED_AT
-             ,  MODIFIED_AT
+        SELECT  POST_ID        /* 게시글 ID */
+             ,  NICKNAME       /* 게시글 작성자 닉네임 */
+             ,  POST_PASSWORD       /* 게시글 비밀번호 */
+             ,  TITLE          /* 게시글 제목 */
+             ,  CONTENT        /* 게시글 내용 */
+             ,  CREATED_AT     /* 게시글 생성 시간 */
+             ,  MODIFIED_AT    /* 게시글 수정 시간 */
          FROM   POSTS
         WHERE 1=1
         <if test="postId != null and postId != ''">
@@ -108,9 +82,9 @@
     <update id="updatePost">
     /* PostMapper, updatePost */
         UPDATE  POSTS
-           SET  title = #{postDto.title}
-             ,  content = #{postDto.content}
-             ,  modified_at = NOW()
+           SET  TITLE = #{title}
+             ,  CONTENT = #{content}
+             ,  MODIFIED_AT = NOW()
          WHERE  1=1
             <if test="postId != null and postId != ''">
             AND POST_ID = #{postId}

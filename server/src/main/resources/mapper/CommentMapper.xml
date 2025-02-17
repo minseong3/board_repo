@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cspi.notionboard.module.comment.dao.CommentMapper">
+
+    <select id="selectAllComments" resultType="map">
+    /* CommentMapper, selectAllComments */
+        SELECT COMMENT_ID    /* 코멘트 ID */
+             , POST_ID        /* 게시글 ID */
+             , NICKNAME       /* 코멘트 작성자 닉네임 */
+             , CONTENT        /* 코멘트 내용 */
+             , CREATED_AT     /* 생성 시간 */
+             , MODIFIED_AT    /* 수정 시간 */
+          FROM COMMENTS
+         WHERE 1=1
+         <if test="postId != null and postId != ''">
+         AND POST_ID = #{postId}
+         </if>
+      ORDER BY CREATED_AT ASC
+    </select>
+
+    <select id="findByCommentId" resultType="map">
+    /* CommentMapper, findById */
+        SELECT COMMENT_ID         /* 코멘트 ID */
+             , POST_ID             /* 게시글 ID */
+             , NICKNAME            /* 코멘트 작성자 닉네임 */
+             , COMMENT_PASSWORD    /* 코멘트 패스워드 */
+             , CONTENT             /* 코멘트 내용 */
+          FROM COMMENTS
+         WHERE 1=1
+         <if test="commentId != null and commentId != ''">
+         AND COMMENT_ID = #{commentId}
+         </if>
+    </select>
+
+    <insert id="insertComment" useGeneratedKeys="false" keyProperty="commentId">
+    /* CommentMapper, insertComment */
+        INSERT INTO COMMENTS
+                  (
+                    POST_ID
+                  , NICKNAME
+                  , COMMENT_PASSWORD
+                  , CONTENT
+                  )
+             VALUES
+                  (
+                    #{postId}
+                  , #{nickname}
+                  , #{comment_password}
+                  , #{content}
+                  )
+    </insert>
+
+    <update id="updateComment">
+    /* CommentMapper, updateComment */
+        UPDATE COMMENTS
+           SET CONTENT = #{content}
+             , MODIFIED_AT = NOW()
+         WHERE 1=1
+         <if test="commentId != null and commentId != ''">
+         AND COMMENT_ID = #{commentId}
+         </if>
+    </update>
+
+    <delete id="deleteComment">
+    /* CommentMapper, deleteComment */
+        DELETE
+          FROM COMMENTS
+         WHERE 1=1
+         <if test="commentId != null and commentId != ''">
+         AND COMMENT_ID = #{commentId}
+         </if>
+    </delete>
+</mapper>

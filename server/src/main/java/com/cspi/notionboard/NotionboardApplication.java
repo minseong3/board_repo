@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.cspi.notionboard.module.post.dao")
+@MapperScan("com.cspi.notionboard.module")
 public class NotionboardApplication {
 
 	public static void main(String[] args) {
