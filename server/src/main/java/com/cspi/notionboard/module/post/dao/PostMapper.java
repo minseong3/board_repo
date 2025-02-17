@@ -1,19 +1,17 @@
 package com.cspi.notionboard.module.post.dao;
 
-import com.cspi.notionboard.module.post.dto.PostDto;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface PostMapper {
-    void insertPost(PostDto postDto);
-    List<PostDto> selectAllPosts();
-    List<PostDto> searchedPosts(@Param("keyword") String keyword);
-    PostDto selectPost(Long postId);
-    PostDto findById(@Param("postId") Long postId);
-    void updatePost(Long postId, @Param("postDto") PostDto postDto);
-    void deletePost(Long postId, @Param("password") String password);
-
+    void insertPost(Map<String, Object> post);
+    List<Map<String, Object>> selectAllPosts();
+    List<Map<String, Object>> searchedPosts(String keyword);
+    Map<String, Object> selectPost(Long postId);
+    Map<String, Object> findById(Long postId);
+    void updatePost(Map<String, Object> post);
+    void deletePost(Long postId);
 }

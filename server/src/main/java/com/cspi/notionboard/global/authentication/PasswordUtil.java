@@ -4,7 +4,8 @@ import org.mindrot.jbcrypt.BCrypt;
 public class PasswordUtil {
     // 비밀번호 해싱
     public static String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
+        String salt = BCrypt.gensalt();
+        return BCrypt.hashpw(password, salt);
     }
 
     // 비밀번호 검증

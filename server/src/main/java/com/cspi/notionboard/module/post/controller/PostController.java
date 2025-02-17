@@ -1,6 +1,5 @@
 package com.cspi.notionboard.module.post.controller;
 
-import com.cspi.notionboard.module.post.dto.PostDto;
 import com.cspi.notionboard.module.post.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -17,26 +17,32 @@ public class PostController {
     private PostService postService;
 
     @PostMapping
-    public ResponseEntity<String> createPost(@RequestBody PostDto postDto) {
-        postService.createPost(postDto);
+    public ResponseEntity<String> insertPost(@RequestBody Map<String, Object> post) {
+        postService.insertPost(post);
         return ResponseEntity.ok("Post is Created");
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<PostDto> allPosts = postService.getAllPosts();
+    public ResponseEntity<List<Map<String, Object>>> getAllPosts() {
+        List<Map<String, Object>> allPosts = postService.getAllPosts();
         return ResponseEntity.ok(allPosts);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
-        PostDto post = postService.getPost(postId);
+    public ResponseEntity<Map<String, Object>> selectPost(@PathVariable Long postId) {
+        Map<String, Object> post = postService.selectPost(postId);
         return ResponseEntity.ok(post);
     }
 
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<List<Map<String, Object>>> searchedPosts(@PathVariable String keyword) {
+        List<Map<String, Object>> posts = postService.searchedPosts(keyword);
+        return ResponseEntity.ok(posts);
+    }
+
     @PostMapping("/{postId}")
-    public ResponseEntity<String> updatePost(@RequestBody PostDto patchDto, @PathVariable Long postId) {
-        postService.patchPost(postId, patchDto);
+    public ResponseEntity<String> updatePost(@RequestBody Map<String, Object> post, @PathVariable Long postId) {
+        postService.updatePost(postId, post);
         return ResponseEntity.ok("Post is Patched");
     }
 
