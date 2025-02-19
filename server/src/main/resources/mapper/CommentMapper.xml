@@ -5,31 +5,41 @@
 
     <select id="selectAllComments" resultType="map">
     /* CommentMapper, selectAllComments */
-        SELECT COMMENT_ID    /* 코멘트 ID */
-             , POST_ID        /* 게시글 ID */
-             , NICKNAME       /* 코멘트 작성자 닉네임 */
-             , CONTENT        /* 코멘트 내용 */
-             , CREATED_AT     /* 생성 시간 */
-             , MODIFIED_AT    /* 수정 시간 */
+        SELECT COMMENT_ID      /* 코멘트 ID */
+             , POST_ID         /* 게시글 ID */
+             , NICKNAME        /* 코멘트 작성자 닉네임 */
+             , CONTENT         /* 코멘트 내용 */
+             , CREATED_AT      /* 생성 시간 */
+             , MODIFIED_AT     /* 수정 시간 */
+          FROM COMMENTS
+         WHERE 1=1
+         <if test="postId != null and postId != ''">
+         AND POST_Id = #{postId}
+         </if>
+    ORDER BY CREATED_AT ASC
+       LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countComments">
+        SELECT COUNT(*)
           FROM COMMENTS
          WHERE 1=1
          <if test="postId != null and postId != ''">
          AND POST_ID = #{postId}
          </if>
-      ORDER BY CREATED_AT ASC
     </select>
 
     <select id="findByCommentId" resultType="map">
-    /* CommentMapper, findById */
-        SELECT COMMENT_ID         /* 코멘트 ID */
-             , POST_ID             /* 게시글 ID */
+    /* CommentMapper, findByCommentId */
+        SELECT COMMENT_ID           /* 코멘트 ID */
+             , POST_ID              /* 게시글 ID */
              , NICKNAME            /* 코멘트 작성자 닉네임 */
-             , COMMENT_PASSWORD    /* 코멘트 패스워드 */
+             , COMMENT_PASSWORD     /* 코멘트 패스워드 */
              , CONTENT             /* 코멘트 내용 */
           FROM COMMENTS
          WHERE 1=1
          <if test="commentId != null and commentId != ''">
-         AND COMMENT_ID = #{commentId}
+         AND COMMENT_Id = #{commentId}
          </if>
     </select>
 
@@ -46,7 +56,7 @@
                   (
                     #{postId}
                   , #{nickname}
-                  , #{comment_password}
+                  , #{commentPassword}
                   , #{content}
                   )
     </insert>
@@ -58,7 +68,7 @@
              , MODIFIED_AT = NOW()
          WHERE 1=1
          <if test="commentId != null and commentId != ''">
-         AND COMMENT_ID = #{commentId}
+         AND COMMENT_Id = #{commentId}
          </if>
     </update>
 

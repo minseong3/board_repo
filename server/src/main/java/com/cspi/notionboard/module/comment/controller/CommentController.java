@@ -3,6 +3,8 @@ package com.cspi.notionboard.module.comment.controller;
 import com.cspi.notionboard.module.comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,14 +19,16 @@ public class CommentController {
     private CommentService commentService;
 
     @GetMapping("/{postId}")
-    public ResponseEntity<List<Map<String, Object>>> selectAllComments(@PathVariable Long postId) {
-        List<Map<String, Object>> allComments = commentService.selectAllComments(postId);
-        return ResponseEntity.ok(allComments);
+    public ResponseEntity<List<Map<String, Object>>> selectAllComments(@PathVariable Long postId,
+                                                                       @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        List<Map<String, Object>> comments = commentService.selectAllComments(pageable, postId);
+        return ResponseEntity.ok(comments);
     }
 
     @PostMapping("/{postId}")
     public ResponseEntity<String> insertComment(@PathVariable Long postId, @RequestBody Map<String, Object> comment) {
         commentService.insertComment(postId, comment);
+        log.info("요청된 댓글 데이터: {}", comment);
         return ResponseEntity.ok("Comment is Created");
     }
 
