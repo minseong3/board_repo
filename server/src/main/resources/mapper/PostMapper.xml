@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cspi.notionboard.module.post.dao.PostMapper">
 
-    <insert id="insertPost" useGeneratedKeys="true" keyProperty="post_id">
+    <insert id="insertPost" useGeneratedKeys="true" keyProperty="postId">
     /* PostMapper, insertPost */
         INSERT INTO POSTS
                   (
@@ -27,7 +27,7 @@
 
     <select id="selectAllPosts" resultType="map">
     /* PostMapper, selectAllPosts */
-        SELECT  POST_ID        /* 게시글 ID */
+        SELECT  POST_ID         /* 게시글 ID */
              ,  NICKNAME       /* 게시글 작성자 닉네임 */
              ,  TITLE          /* 본문 제목 */
              ,  CONTENT        /* 본문 내용 */
@@ -35,11 +35,23 @@
              ,  MODIFIED_AT    /* 수정 시간 */
           FROM  POSTS
       ORDER BY  CREATED_AT DESC
+         LIMIT  #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countPosts" resultType="int">
+        SELECT COUNT(*)
+          FROM POSTS
+    </select>
+
+    <select id="countSearchedPosts" resultType="int">
+        SELECT COUNT(*)
+          FROM POSTS
+         WHERE TITLE ILIKE '%' || #{keyword} || '%'
     </select>
 
     <select id="searchedPosts" resultType="map">
     /* PostMapper, searchedPosts */
-        SELECT  POST_ID       /* 게시글 ID */
+        SELECT  POST_ID        /* 게시글 ID */
              ,  NICKNAME      /* 게시글 작성자 닉네임 */
              ,  TITLE         /* 본문 제목 */
              ,  CONTENT       /* 본문 내용 */
@@ -50,33 +62,44 @@
           <if test="keyword != null and keyword != ''">
           AND LOWER(TITLE) LIKE '%' || LOWER(#{keyword}) || '%'
          </if>
+     ORDER BY   CREATED_AT DESC
+        LIMIT   #{size} OFFSET #{offset}
     </select>
 
     <select id="selectPost" resultType="map">
-        SELECT POST_ID        /* 게시글 ID */
-             , NICKNAME       /* 게시글 작성자 닉네임 */
-             , TITLE          /* 게시글 제목 */
-             , CONTENT        /* 게시글 내용 */
-             , CREATED_AT     /* 생성 시간 */
-             , MODIFIED_AT    /* 수정 시간 */
+        SELECT POST_ID          /* 게시글 ID */
+             , NICKNAME         /* 게시글 작성자 닉네임 */
+             , TITLE            /* 게시글 제목 */
+             , CONTENT          /* 게시글 내용 */
+             , CREATED_AT       /* 생성 시간 */
+             , MODIFIED_AT      /* 수정 시간 */
           FROM POSTS
          WHERE POST_ID = #{postId}
     </select>
 
-    <select id="findById" resultType="map">
+    <select id="countCommentsByPostId" resultType="int">
+        SELECT COUNT(*)
+          FROM COMMENTS
+         WHERE 1=1
+         <if test="postId != null and postId != ''">
+         AND POST_ID = #{postId}
+         </if>
+    </select>
+
+    <select id="findByPostId" resultType="map">
     /* PostMapper, findById */
-        SELECT  POST_ID        /* 게시글 ID */
-             ,  NICKNAME       /* 게시글 작성자 닉네임 */
-             ,  POST_PASSWORD       /* 게시글 비밀번호 */
-             ,  TITLE          /* 게시글 제목 */
-             ,  CONTENT        /* 게시글 내용 */
-             ,  CREATED_AT     /* 게시글 생성 시간 */
-             ,  MODIFIED_AT    /* 게시글 수정 시간 */
-         FROM   POSTS
-        WHERE 1=1
-        <if test="postId != null and postId != ''">
-        AND POST_ID = #{postId}
-        </if>
+        SELECT  POST_ID          /* 게시글 ID */
+             ,  NICKNAME         /* 게시글 작성자 닉네임 */
+             ,  POST_PASSWORD    /* 게시글 비밀번호 */
+             ,  TITLE            /* 게시글 제목 */
+             ,  CONTENT          /* 게시글 내용 */
+             ,  CREATED_AT       /* 게시글 생성 시간 */
+             ,  MODIFIED_AT      /* 게시글 수정 시간 */
+          FROM  POSTS
+         WHERE 1=1
+         <if test="postId != null and postId != ''">
+         AND POST_ID = #{postId}
+         </if>
     </select>
 
     <update id="updatePost">

@@ -3,10 +3,11 @@ package com.cspi.notionboard.module.post.controller;
 import com.cspi.notionboard.module.post.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,20 +24,23 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getAllPosts() {
-        List<Map<String, Object>> allPosts = postService.getAllPosts();
+    public ResponseEntity<Page<Map<String, Object>>> getAllPosts(@PageableDefault(page = 0, size = 10)Pageable pageable) {
+        Page<Map<String, Object>> allPosts = postService.getAllPosts(pageable);
         return ResponseEntity.ok(allPosts);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<Map<String, Object>> selectPost(@PathVariable Long postId) {
-        Map<String, Object> post = postService.selectPost(postId);
+    public ResponseEntity<Map<String, Object>> selectPost(@PathVariable Long postId,
+                                                          @PageableDefault(page = 0, size = 10)Pageable pageable) {
+        Map<String, Object> post = postService.selectPost(postId, pageable);
+
         return ResponseEntity.ok(post);
     }
 
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<List<Map<String, Object>>> searchedPosts(@PathVariable String keyword) {
-        List<Map<String, Object>> posts = postService.searchedPosts(keyword);
+    public ResponseEntity<Page<Map<String, Object>>> searchedPosts(@PathVariable String keyword,
+                                                             @PageableDefault(page = 0, size = 10)Pageable pageable) {
+        Page<Map<String, Object>> posts = postService.searchedPosts(pageable, keyword);
         return ResponseEntity.ok(posts);
     }
 
